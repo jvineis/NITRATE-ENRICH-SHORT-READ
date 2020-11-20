@@ -77,11 +77,11 @@ anvio will leave a space in the export name and this needs to be fixed.. I use t
 ### Then you can use the resulting "covstats.txt" file to look at the coverage of each gene derived from a single sample across all samples. Friggen awesome! Right!?!?! Here is how you would run that analysis.
 1. first you need to run a script that will generate the sbatch scripts that will collect the coverage of a given gene. You will need a file called "x_metagenomic-sample-names.txt" which will contains the list of metagenomic samples (there are transcriptome samples as well, and I don't want to use those assemblies for this part of the project) and in this case, each one has a "s_" prior to the sample name. This is the script that will create a sbatch script for each sample.
     
-       for i in `cat x_metagenomic-sample-names.txt`; do python ~/scripts/create-tabulate-gene-coverage-script.py ${i}; done
+        for i in `cat x_metagenomic-sample-names.txt`; do python ~/scripts/create-tabulate-gene-coverage-script.py ${i}; done
        
-### Now that you have a bunch of bash scripts in the directory, its time to run them. Its important to load them in batches if you have more than 25 samples so that you don't overload the system. You can simply use a couple of lists that contain subsets of your samples.  Get the first batch going, wait a bit, and then load the second batch.
+2.  Now that you have a bunch of bash scripts in the directory, its time to run them. Its important to load them in batches if you have more than 25 samples so that you don't overload the system. You can simply use a couple of lists that contain subsets of your samples.  Get the first batch going, wait a bit, and then load the second batch.
   
-       for i in `cat x_samples-1.txt`; do sbatch ${i}_tabulate-genecoverage.shx; done
+        for i in `cat x_samples-1.txt`; do sbatch ${i}_tabulate-genecoverage.shx; done
        
 ### These bash scripts will generate a coverage file for each of the pairwise mapping covstats.txt files in your "MAPPING" directory. For example, there will be a ton of files named something like this s_5SB15_MG-vs-8NB15_MT-nirS.txt looking something like this.
 
@@ -107,6 +107,8 @@ This of course is the coverage of each nirS scaffold found in sample s_5SB15_MG 
 
     for i in `cat x_sample-names.txt`; do python ~/scripts/combine-coverage-from-hmms-and-covstats.py --gene nirS --path /scratch/vineis.j/NITROGEN_ENRICH/GLOBUS-DOWNLOAD/ --out ${i}-nirS.txt --sample ${i}-; done
     
+This will create a file that contains each of the nirS sequences found within all scaffolds and the coverage of each of the scaffolds within each individual sample.
+
 
 
 
