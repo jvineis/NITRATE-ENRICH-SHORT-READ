@@ -109,9 +109,36 @@ This of course is the coverage of each nirS scaffold found in sample s_5SB15_MG 
     
 This will create a file that contains each of the nirS sequences found within all scaffolds and the coverage of each of the scaffolds within each individual sample.
 
+### Now combine all of the tables. You can do this with excel or unix.  I'll put together a script that combines tables and normalizes based on the number of reads per sample.  THIS IS A CRITICAL NORMALIZATION.. Do not analyzed your data without it. Here is one way to do this for nirS
 
+1. From the directory containing all of the nirS.txt files created above run this to concatenate them.
 
+        cat *nirS.txt > x_ALL-nirS-NENRICH.txt
+        
+2. Fix the table so that you don't have a header for each of the samples. For now, just open in excel and remove all but a single header line. Then run the script below. This script requires that you have a two column file with the sample name in column 1 and read cound in column 2.
 
+The top of my file looks like this
+
+    s_10CB15_MG	100415802
+    s_10CB15_MT	21822096
+    s_10CP15_MG	85530616
+    s_10CP15_MT	25864552
+    s_10CT5_MG	133443700
+    s_10CT5_MT	12044266
+    s_10NB15_MT	19241118
+
+The top of the nirS concatenated file of mapping to each sample.
+
+    sample	nirS	nirS_source	nirS_comparison	nirS_omics	nirS_comparison_depth
+    s_8WT15_MG-vs-10CB15_MT-covstats.txt	nirS	8WT15	10CB15	MT	167.186
+    s_8WT15_MG-vs-10CB15_MG-covstats.txt	nirS	8WT15	10CB15	MG	540.1029
+    s_8WP15_MG-vs-10CB15_MT-covstats.txt	nirS	8WP15	10CB15	MT	117.1182
+
+You can run the script below if your data are exactly structured as mine.  Otherwise it will take some adjustment. This part could be improved and I'll work on it in the future.
+
+    python ~/scripts/correct-depth-of-coverage-by-read-count.py x_ALL-nirS-NENRICH.txt ../filtered-read-count-per-sample.txt x_ALL-nirS-NENRICH-normalized.txt
+    
+The resulting file "x_ALL-nirS-NENRICH-normalized.txt" contains a last column that can be discussed as the average coverage per million reads. It was calculated by dividing the average coverage of the scaffold that contains the gene of interest divided by the total number of reads in the dataset multiplied by 1,000,000.
     
      
      
