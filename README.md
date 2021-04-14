@@ -170,11 +170,11 @@ The resulting file "x_ALL-nirS-NENRICH-normalized.txt" contains a last column th
 
     cat x_ANVIO-assembly-dbs/s_${SAMPLE}-cazy-out-dm.ps | awk '$5<1e-15&&$10>0.35' > x_ANVIO-assembly-dbs/s_${SAMPLE}-cazy-stringent-hits.txt
     
-#### You can't run the whole thing at once... You will need to run the anvio portion first, which will generate a contigs database and export all prodigal gene calls in the database. When this is complete, you will can use hmmer to run the search for carbohydrate use among all of your contigs. 
+#### You can't run the whole thing at once... You will need to run the anvio portion first, which will generate a contigs database and export all prodigal gene calls in the database. When this is complete, you will can use hmmer to run the search for carbohydrate use among all of your contigs. Don't forget that you will need to pay attention to your conda environments when running the bash command because the first part needs and anvio environment and the second half needs the hmmer environment. 
 
 ### So, now you have a file for each sample ending with "cazy-stringent-hits.txt".  You need to combine these into a single matrix of presence absence in order to get an idea for the composition of carbohydrate use in each of your samples.  You can use the script below to make this happen.
 
-    combine-cazy-tables.py samples.txt
+    combine-cazy-tables.py sample_names.txt
 
 #### I ran this script from here (/scratch/vineis.j/NITROGEN_ENRICH/GLOBUS-DOWNLOAD/x_ANVIO-assembly-dbs) and the python script and sample_names.txt file can be found in this repository
 
