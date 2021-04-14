@@ -11,8 +11,32 @@ parser.add_argument('--sample', help='the name of the sample that you are explor
 parser.add_argument('--out',help='the file to write incredible results')
 args = parser.parse_args()
 
+### The code below is good for working on DEEP CORE samples. The block below this on is good for the nitrate enriched project
+#outfile = open(args.out, 'w')
+#outfile.write('sample'+'\t'+args.gene+'\t'+args.gene+'_source'+'\t'+args.gene+'_source_depth'+'\t'+args.gene+'_comparison'+'\t'+args.gene+'_comparison_depth'+'\n')
+#paths = args.path+args.sample+"*"+args.gene+".txt"
+#print(paths)
+#for cov_file in glob.glob(paths):
+#    with open(cov_file, 'r') as f:
+#        sums = []
+#        for line in f:
+#            x = line.strip().split('\t')
+#            if x[0]=='scaffold':
+#                sample_name = x[1].split('/')[1]
+#                source = x[1].split('/')[1].split('-')[0]+'_'+x[1].split('/')[1].split('-')[1]
+#                source_depth = x[1].split('/')[1].split('-')[1]
+#                comparison = x[1].split('/')[1].split('-')[3]+'_'+x[1].split('/')[1].split('-')[4]
+#                comparison_depth = x[1].split('/')[1].split('-')[4]
+#                outfile.write(sample_name+'\t'+source+'\t'+source_depth+'\t'+comparison+'\t'+comparison_depth+'\t')
+#                
+#            else:
+#               sums.append(round(float(x[1]),4))
+#        outfile.write(str(sum(sums))+'\n')
+
+
+## Here is where the action starts for the nitrogen enrichment project:
 outfile = open(args.out, 'w')
-outfile.write('sample'+'\t'+args.gene+'\t'+args.gene+'_source'+'\t'+args.gene+'_source_depth'+'\t'+args.gene+'_comparison'+'\t'+args.gene+'_comparison_depth'+'\n')
+outfile.write('sample'+'\t'+args.gene+'\t'+args.gene+'_source'+'\t'+args.gene+'_comparison'+'\t'+args.gene+'_omics'+'\t'+args.gene+'_comparison_depth'+'\n')
 paths = args.path+args.sample+"*"+args.gene+".txt"
 #print(paths)
 for cov_file in glob.glob(paths):
@@ -21,13 +45,11 @@ for cov_file in glob.glob(paths):
         for line in f:
             x = line.strip().split('\t')
             if x[0]=='scaffold':
-                sample_name = x[1].split('/')[1]
-                source = x[1].split('/')[1].split('-')[0]+'_'+x[1].split('/')[1].split('-')[1]
-                source_depth = x[1].split('/')[1].split('-')[1]
-                comparison = x[1].split('/')[1].split('-')[3]+'_'+x[1].split('/')[1].split('-')[4]
-                comparison_depth = x[1].split('/')[1].split('-')[4]
-                outfile.write(sample_name+'\t'+source+'\t'+source_depth+'\t'+comparison+'\t'+comparison_depth+'\t')
-                
+                source = x[1].split("/")[1]
+                source_sample = x[1].split("/")[1].split("_")[1]
+                comparison = x[1].split("/")[1].split("_")[2].split("-")[2]
+                omics = x[1].split("/")[1].split("_")[3].split('-')[0]
+                outfile.write(source+'\t'+args.gene+'\t'+source_sample+'\t'+comparison+'\t'+omics+'\t')
             else:
                sums.append(round(float(x[1]),4))
         outfile.write(str(sum(sums))+'\n')
