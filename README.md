@@ -180,8 +180,7 @@ The resulting file "x_ALL-nirS-NENRICH-normalized.txt" contains a last column th
 
 #### I ran this script from here (/scratch/vineis.j/NITROGEN_ENRICH/GLOBUS-DOWNLOAD/x_ANVIO-assembly-dbs) and the python script and sample_names.txt file can be found in this git repository
 
-### A simpler way to run the cazyme and the fungene analysis is found below: this is how I plan to run it in the future.  This approach requires that you have created the anvio database for each of your assemblies and run the hmms for the cazyme and fungene hmms. This can be accomplished with a single script.
-
+### A simpler way to run the cazyme and the fungene analysis is found below: this is how I plan to run it in the future.  This approach requires that you have created the anvio database for each of your assemblies and run the hmms for the cazyme and fungene hmms. This can be accomplished with a single script below if you haven't already done this step. You can find examples of the "sample_names.txt" file in this repository. Just be sure to specify the correct path in the "anvi-gen-contigs-database" to your different assemblies :). If this doesn't make sense today, try again tomorrow.
     #!/bin/bash
     #
     #SBATCH --nodes=1
@@ -208,6 +207,40 @@ The resulting file "x_ALL-nirS-NENRICH-normalized.txt" contains a last column th
     sed 's/ bin/_bin/g' x_ALL-ANVIO-CAZY.faa > fix
     mv fix x_ALL-ANVIO-CAZY.faa
     
+#### Now for the best part!!! Run the script below to create an amazing matrix of the genes in your exported cazy genes... so beautiful.
+
+    #!/bin/bash
+    #
+    #SBATCH --nodes=1
+    #SBATCH --time=12:00:00
+    #SBATCH --tasks-per-node=10
+    #SBATCH --partition=short
+    #SBATCH --mem=100Gb
+
+    python ~/scripts/calculate-gene-coverage-from-faa-and-covstats.py -genes x_ALL-ANVIO-CAZY.faa -rc NITROGEN-ENRICH-METADATA.txt -o x_ALL-NORMALIZED-GENE-MATRIX.txt -cov /scratch/vineis.j/NITROGEN_ENRICH/GLOBUS-DOWNLOAD/MAPPING/
+    
+#### This has created a matrix containing the genes as rows and the samples as columns.  The values within each of the cells was calculated by estimating the number of reads mapping to each of the genes within your "x_ALL-ANVIO-CAZY.faa" file based on the mapping results contained in the coverage stats table created duing the bbmap step.  Oh. You don't know what I'm talking about because I didn't describe very well the script that I used to do this when only mapping to the source reads.  Above, I conducted and all vs all approach, mapping each sample back to each of the assemblies. Here is how I did it. 
+
+    
+    #!/bin/bash
+    #
+    #SBATCH --nodes=1
+    #SBATCH --tasks-per-node=10
+    #SBATCH --mem=200Gb
+    #SBATCH --time=24:00:00
+    #SBATCH --partition=short
+    #SBATCH --array=1-62
+
+    SAMPLE=$(sed -n "$SLURM_ARRAY_TASK_ID"p x_all-samples.txt)
+
+    ref_file=${SAMPLE}/QC_and_Genome_Assembly/assembly.contigs.fasta
+    fastq_file=$( echo "${SAMPLE}/Filtered_Raw_Data/"*"fastq.gz")
+    output_file=MAPPING/${SAMPLE}-vs-${SAMPLE}.bam
+    covstats_file=MAPPING/${SAMPLE}-vs-${SAMPLE}-covstats.txt
+
+    bbmap.sh threads=4 nodisk=true interleaved=true ambiguous=random in=${fastq_file} ref=${ref_file} out=${output_file} covstats=${covstats_file} bamscript=to_bam.sh
+    
+###ANVIO PLOTS of the matrices created above.
     
 
 
