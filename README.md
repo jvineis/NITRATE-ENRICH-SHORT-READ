@@ -15,7 +15,7 @@ The assemblies are usually found within the directory.. something like this
 
     /scratch/vineis.j/NITROGEN_ENRICH/GLOBUS-DOWNLOAD/s_10CB15_MG/QC_and_Genome_Assembly/assembly.contigs.fasta
 
-So to generate an anvio assembly, I use a slurm script that looks like the one below.  The paths will be something that you will need to pay attention to. 
+So to generate an anvio database, I use a slurm script that looks like the one below.  The paths will be something that you will need to pay attention to. 
 
     #!/bin/bash
     #
